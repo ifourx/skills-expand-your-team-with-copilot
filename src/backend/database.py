@@ -25,11 +25,19 @@ def init_database():
         for name, details in initial_activities.items():
             activities_collection.insert_one({"_id": name, **details})
     else:
-        for name, details in initial_activities.items():
-            if "difficulty" in details:
+        difficulty_activities = {
+            name: details["difficulty"]
+            for name, details in initial_activities.items()
+            if "difficulty" in details
+        }
+        if activities_collection.count_documents({
+            "_id": {"$in": list(difficulty_activities.keys())},
+            "difficulty": {"$exists": False}
+        }) > 0:
+            for name, difficulty in difficulty_activities.items():
                 activities_collection.update_one(
                     {"_id": name, "difficulty": {"$exists": False}},
-                    {"$set": {"difficulty": details["difficulty"]}}
+                    {"$set": {"difficulty": difficulty}}
                 )
             
     # Initialize teacher accounts if empty
