@@ -190,6 +190,46 @@ section h3 {
   justify-content: center;
 }
 
+.social-share {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-light);
+}
+
+.share-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.social-share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.share-button {
+  background-color: var(--background);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+}
+
+.share-button:hover {
+  background-color: var(--primary-light);
+  color: var(--primary-text);
+  border-color: var(--primary-light);
+}
+
+.share-native-button {
+  background-color: var(--primary);
+  color: var(--primary-text);
+  border-color: var(--primary-dark);
+}
+
 /* Activity Tag */
 .activity-tag {
   position: absolute;
