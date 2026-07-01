@@ -314,6 +314,19 @@ document.addEventListener("DOMContentLoaded", () => {
     return details.schedule;
   }
 
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (char) => {
+      const htmlEscapes = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+      return htmlEscapes[char];
+    });
+  }
+
   // Function to determine activity type (this would ideally come from backend)
   function getActivityType(activityName, description) {
     const name = activityName.toLowerCase();
@@ -528,7 +541,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </span>
     `;
     const difficultyHtml = details.difficulty
-      ? `<p><strong>Difficulty:</strong> ${details.difficulty}</p>`
+      ? `<p><strong>Difficulty:</strong> ${escapeHtml(details.difficulty)}</p>`
       : "";
 
     // Create capacity indicator
