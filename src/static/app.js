@@ -569,6 +569,43 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="social-share">
+        <span class="share-label">Share with friends:</span>
+        <div class="social-share-buttons">
+          <button
+            class="share-button share-native-button"
+            data-platform="native"
+            data-activity="${name}"
+            aria-label="Share ${name} activity"
+          >
+            Share
+          </button>
+          <button
+            class="share-button"
+            data-platform="whatsapp"
+            data-activity="${name}"
+            aria-label="Share ${name} on WhatsApp"
+          >
+            WhatsApp
+          </button>
+          <button
+            class="share-button"
+            data-platform="x"
+            data-activity="${name}"
+            aria-label="Share ${name} on X"
+          >
+            X
+          </button>
+          <button
+            class="share-button"
+            data-platform="facebook"
+            data-activity="${name}"
+            aria-label="Share ${name} on Facebook"
+          >
+            Facebook
+          </button>
+        </div>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -587,7 +624,74 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        shareActivity(button.dataset.platform, name, details);
+      });
+    });
+
     activitiesList.appendChild(activityCard);
+  }
+
+  function createShareMessage(activityName, activityDetails) {
+    return `Join me in ${activityName} at Mergington High School! ${activityDetails.description}`;
+  }
+
+  function createShareUrl(activityName) {
+    const pageUrl = `${window.location.origin}${window.location.pathname}`;
+    return `${pageUrl}?activity=${encodeURIComponent(activityName)}`;
+  }
+
+  async function shareActivity(platform, activityName, activityDetails) {
+    const shareText = createShareMessage(activityName, activityDetails);
+    const shareUrl = createShareUrl(activityName);
+
+    if (
+      platform === "native" &&
+      navigator.share &&
+      typeof navigator.share === "function"
+    ) {
+      try {
+        await navigator.share({
+          title: `${activityName} at Mergington High School`,
+          text: shareText,
+          url: shareUrl,
+        });
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          showMessage("Sharing was cancelled or failed. Please try again.", "info");
+        }
+      }
+      return;
+    }
+
+    if (platform === "native") {
+      const fallbackText = `${shareText} ${shareUrl}`;
+      try {
+        await navigator.clipboard.writeText(fallbackText);
+        showMessage("Share details copied. Paste it to share with friends!", "success");
+      } catch (error) {
+        showMessage("Unable to copy share details. Please try again.", "error");
+      }
+      return;
+    }
+
+    const encodedText = encodeURIComponent(shareText);
+    const encodedUrl = encodeURIComponent(shareUrl);
+    let socialUrl = "";
+
+    if (platform === "whatsapp") {
+      socialUrl = `https://wa.me/?text=${encodedText}%20${encodedUrl}`;
+    } else if (platform === "x") {
+      socialUrl = `https://x.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+    } else if (platform === "facebook") {
+      socialUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`;
+    }
+
+    if (socialUrl) {
+      window.open(socialUrl, "_blank", "noopener,noreferrer");
+    }
   }
 
   // Event listeners for search and filter
