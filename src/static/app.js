@@ -635,7 +635,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function createShareMessage(activityName, activityDetails) {
-    return `Join me in ${activityName} at Mergington High School! ${activityDetails.description}`;
+    const safeActivityName = String(activityName || "")
+      .replace(/\s+/g, " ")
+      .trim();
+    const safeDescription = String(activityDetails?.description || "")
+      .replace(/\s+/g, " ")
+      .trim();
+    return `Join me in ${safeActivityName} at Mergington High School! ${safeDescription}`;
   }
 
   function createShareUrl(activityName) {
@@ -660,7 +666,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       } catch (error) {
         if (error.name !== "AbortError") {
-          showMessage("Sharing was cancelled or failed. Please try again.", "info");
+          showMessage(
+            "Unable to share. Please try again.",
+            "error"
+          );
         }
       }
       return;
@@ -670,7 +679,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const fallbackText = `${shareText} ${shareUrl}`;
       try {
         await navigator.clipboard.writeText(fallbackText);
-        showMessage("Share details copied. Paste it to share with friends!", "success");
+        showMessage(
+          "Share details copied to clipboard!",
+          "success"
+        );
       } catch (error) {
         showMessage("Unable to copy share details. Please try again.", "error");
       }
