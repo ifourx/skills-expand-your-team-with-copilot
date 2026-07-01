@@ -455,7 +455,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } else if (
         !details.difficulty ||
-        details.difficulty.toLowerCase() !== currentDifficulty
+        details.difficulty.toLowerCase().trim() !==
+          currentDifficulty.toLowerCase().trim()
       ) {
         return;
       }
